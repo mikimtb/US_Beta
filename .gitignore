@@ -1,0 +1,9 @@
+*.hex
+dist/
+debug/
+*.ccspjt
+nbproject/
+build/
+Makefile
+inc/main.h
+src/main.c
