@@ -4,7 +4,8 @@
 #include "gpio.c"
 #include "timer.h"
 #include "timer.c"
-#include "main.h"
+#include "comparator.h"
+#include "comparator.c"
 
 //Type definitions
 typedef void (*t_fptr)(void);
@@ -47,9 +48,27 @@ void timer_tick(void)
     T0IF = 0;
 }
 
+/**
+ * Comparator change event handler
+ * ECHO connected to the C2IN-, Vref connected internally to C2IN+
+ * Comparator output is inverted
+ * R2IN+ < R2IN- = HIGH
+ * R2IN+ > R2IN- = LOW
+ */
+#INT_COMP2
+void comparator_isr_handler()
+{
+    if (C2OUT == TRUE)
+        event = transceiver_echo_above;
+    else
+        event = transceiver_echo_below;
+    
+    clear_interrupt(INT_COMP2);
+}
 //
 void transceiver_init()
 {
+    comparator_init();
     gpio_init();
     timer_init();
 }
@@ -133,4 +152,22 @@ void transceiver_timeout()
     b = PORTB;                                      // Clear mismatch condition
     clear_interrupt(INT_RB);
     enable_interrupts(INT_RB0);
+}
+
+/**
+ * Callback function that is called when echo goes above threshold voltage
+ */
+void transceiver_echo_above()
+{
+    output_high(PIN_B3);
+    event = transceiver_wait;
+}
+
+/**
+ * Callback function that is called when echo goes below threshold voltage
+ */
+void transceiver_echo_below()
+{
+    output_low(PIN_B3);
+    event = transceiver_wait;
 }

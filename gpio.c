@@ -12,8 +12,8 @@ void gpio_init()
 {
     char b;
     
-    set_tris_b(get_tris_b() & 0b11111011);          // Set RB1 as output becasue 
-                                                    // the pin is used as ECHO
+    set_tris_b(get_tris_b() & 0b11110011);          // Set RB2 and RB3 as output because 
+                                                    // the pins are used as ECHO and TEST
     b = PORTB;                                      // Clear mismatch condition
     clear_interrupt(INT_RB);
     enable_interrupts(INT_RB0);
