@@ -1,5 +1,6 @@
 #include "transceiver.h"
 #include "pwm.h"
+#include "pwm.c"
 #include "gpio.h"
 #include "gpio.c"
 #include "timer.h"

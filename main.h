@@ -19,7 +19,7 @@
 #FUSES INTRC                    // Internal RC Osc, no CLKOUT
 #FUSES NOBROWNOUT            	// No brownout reset
 #FUSES NOIESO                	// Internal External Switch Over mode disabled
-#FUSES NOLVP                 	// No low voltage prgming, B3(PIC16) or B5(PIC18) used for I/O
+#FUSES NOLVP                 	// No low voltage prgming, B3(PIC16) or B5(PIC18) used for I/O 
 #else
 #include <16F684.h>
 #device adc=10

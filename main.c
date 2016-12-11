@@ -1,6 +1,4 @@
 #include "main.h"
-#include "pwm.h"
-#include "pwm.c"
 #include "transceiver.h"
 #include "transceiver.c"
 
