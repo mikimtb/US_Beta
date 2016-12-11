@@ -5,5 +5,3 @@ debug/
 nbproject/
 build/
 Makefile
-main.h
-main.c
