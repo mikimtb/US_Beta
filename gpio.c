@@ -1,5 +1,8 @@
 #include "gpio.h"
 
+/* PORTB address */
+#byte PORTB = 0x06
+
 /**
  * Function initialize gpio pins for Trigger and Echo
  * Trigger - Input, Low to High edge on gpio raise gpio_isr_handler

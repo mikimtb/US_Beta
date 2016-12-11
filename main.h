@@ -23,6 +23,5 @@
 #define TRIG PIN_B0
 #define ECHO PIN_B2
 
-
 #endif	/* US_RANGE_FINDER_H */
 

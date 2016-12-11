@@ -1,5 +1,19 @@
 #include "pwm.h"
 
+// Global defines
+#define P1A     PIN_C2
+#define P1B     PIN_D5
+
+// Registers definitions
+/* Peripheral interrupt register */
+#byte PIR1=0x0c
+#bit TMR2IF=PIR1.1
+/* Timer 2 control register */
+#byte T2CON=0x12
+#bit TMR2ON=T2CON.2
+/* Timer 2 register */
+#byte TMR2=0x11
+
 /**
  * Function initialize PWM pair deadband delay
  * @param deadband  0-127 the number represent PWM dead band delay time
