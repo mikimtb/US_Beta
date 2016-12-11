@@ -12,7 +12,6 @@
 #byte PORTB = 0x06
 
 void gpio_init(void);
-void gpio_isr_handler(void);
 
 
 #endif	/* GPIO_H */

@@ -21,10 +21,8 @@
 
 /* Global defines */
 #define TRIG PIN_B0
-#define ECHO PIN_B1
+#define ECHO PIN_B2
 
-/* Global variables */
-int8 trigger = 0;
 
 #endif	/* US_RANGE_FINDER_H */
 

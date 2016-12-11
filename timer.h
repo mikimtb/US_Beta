@@ -9,7 +9,8 @@
 #define	TIMER_H
 
 void timer_init(void);
-void timer_tick(void);
+void timer_start(int tout);
+
 
 #endif	/* TIMER_H */
 
