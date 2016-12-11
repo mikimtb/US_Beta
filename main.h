@@ -5,8 +5,8 @@
  * Created on October 31, 2016, 3:56 PM
  */
 
-#ifndef US_RANGE_FINDER_H
-#define	US_RANGE_FINDER_H
+#ifndef MAIN_H
+#define	MAIN_H
 
 #include <16F887.h>
 #device adc=10
