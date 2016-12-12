@@ -19,4 +19,16 @@ void gpio_init()
     enable_interrupts(INT_RB0);
 }
 
+/**
+ * Function enable INT_RB0 interrups in order to catch trigger
+ */
+void gpio_trigger_enable()
+{
+    char b;
+    
+    b = PORTB;                              // Clear mismatch condition
+    clear_interrupt(INT_RB);
+    enable_interrupts(INT_RB0);
+}
+
 

@@ -9,6 +9,8 @@
 #define	COMPARATOR_H
 
 void comparator_init(void);
+void comparator_enable(void);
+void comparator_disable(void);
 
 #endif	/* COMPARATOR_H */
 

@@ -5,7 +5,6 @@
 void main()
 {
     /* Initialize PWM module*/
-    pwm_init();
     transceiver_init();
     enable_interrupts(global);                  // Enable all interrupts
     

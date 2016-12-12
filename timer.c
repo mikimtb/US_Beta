@@ -24,9 +24,17 @@ void timer_init(void)
 void timer_start(int tout)
 {
     timeout = tout;
-    set_timer0(10);                                  // Set timer0 value to 5 in
+    set_timer0(10);                                 // Set timer0 value to 10 in
                                                     // order to produce overflow
                                                     // on every 1ms
     T0IF = 0;
     enable_interrupts(INT_RTCC);
+}
+
+/**
+ * Function disable timer interrupt and prevent timer tick to happen
+ */
+void timer_stop()
+{
+    disable_interrupts(INT_RTCC);
 }

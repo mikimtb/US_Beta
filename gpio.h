@@ -9,6 +9,7 @@
 #define	GPIO_H
 
 void gpio_init(void);
+void gpio_trigger_enable(void);
 
 #endif	/* GPIO_H */
 
