@@ -88,6 +88,21 @@ void transceiver_init()
 }
 
 /**
+ * Reset all flags after initialization is done
+ */
+void transceiver_ready()
+{
+    output_low(ECHO);
+    timer_stop();
+    comparator_disable();
+    gpio_trigger_enable();
+        
+    state = WAIT_FOR_TRIGGER;
+        
+    event = transceiver_wait;
+}
+
+/**
  * Function produce pulse_no pulses on PWM output pins
  * @param pulse_no - Number of pulses that will be produced
  */
@@ -147,6 +162,7 @@ void transceiver_trigger()
     transceiver_transmit(7);                // Transmit 7 pulses
     transceiver_listen();                   // Switch the transceiver to listening mode
     
+    setup_vref(VREF_HIGH | VREF_3_59375V);
     comparator_enable();                    // Enable comparator module
     
     event = transceiver_wait;
@@ -199,9 +215,12 @@ void transceiver_echo_below()
                                                 // so timer tick should be prevented and timeout
                                                 // should be set to 28ms 
         state = LISTEN_28MS;
+        
+        comparator_disable();
         setup_vref(VREF_HIGH | VREF_2_65625V);  // Change threshold to catch echo
+        comparator_enable();
     }
-    else if(state == LISTEN_28MS)
+    /*else if(state == LISTEN_28MS)
     {
         output_low(ECHO);
         // The echo is detected so all modules but trigger detection should be disabled
@@ -210,6 +229,6 @@ void transceiver_echo_below()
         gpio_trigger_enable();
         
         state = WAIT_FOR_TRIGGER;
-    }
+    }*/
     event = transceiver_wait;
 }

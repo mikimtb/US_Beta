@@ -19,7 +19,7 @@ enum
 void comparator_init()
 {
     setup_comparator(CP1_B3_VREF | CP2_A0_VREF | CP2_INVERT);
-    setup_vref(VREF_HIGH | VREF_2_5V);              // Sets internal Vref to 2.5V
+    setup_vref(VREF_HIGH | VREF_3_59375V);              // Sets internal Vref to 3.6V
 }
 
 /**
@@ -27,8 +27,6 @@ void comparator_init()
  */
 void comparator_enable()
 {
-    setup_vref(VREF_HIGH | VREF_3_59375V);
-    
     clear_interrupt(INT_COMP2);                     // Clear interrupt flag and enable 
     enable_interrupts(INT_COMP2);                   // Comparator 2 interrupt on change
 }

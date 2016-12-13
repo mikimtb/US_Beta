@@ -15,6 +15,7 @@ void comparator_isr_handler(void);
 
 // Public function prototypes
 void transceiver_init(void);
+void transceiver_ready(void);
 void transceiver_transmit(int8 pulse_no);
 void transceiver_listen(void);
 void transceiver_event_handler(void);
