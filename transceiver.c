@@ -31,7 +31,11 @@ int timeout = 0;
 /**
  * GPIO interrupt handler. Low to High edge event handler raise this function
  */
+#ifdef DEBUG
 #INT_RB
+#else
+#INT_RA
+#endif
 void gpio_isr_handler()
 {
     char b;
@@ -39,9 +43,17 @@ void gpio_isr_handler()
     if(input(TRIG))
     {
         event = transceiver_trigger;
+#ifdef DEBUG
         disable_interrupts(INT_RB);
+#else
+        disable_interrupts(INT_RA);
+#endif
     }
+#ifdef DEBUG
     b = PORTB;                                      // Clear mismatch condition
+#else
+    b = PORTA;                                      // Clear mismatch condition
+#endif
 }
 
 /**
@@ -129,9 +141,14 @@ void transceiver_transmit(int8 pulse_no)
  */
 void transceiver_listen()
 {
+#ifdef DEBUG
     /* Switch P1A - RC2 to high Z mode */
     set_tris_c(get_tris_c() | 0b00000100);
-    /* Switch P1B - RD5 to logic zero */
+#else
+    /* Switch P1A - RC5 to high Z mode */
+    set_tris_c(get_tris_c() | 0b00100000);
+#endif
+    /* Switch P1B to logic zero */
     output_low(P1B);
 }
 
@@ -220,15 +237,6 @@ void transceiver_echo_below()
         setup_vref(VREF_HIGH | VREF_2_65625V);  // Change threshold to catch echo
         comparator_enable();
     }
-    /*else if(state == LISTEN_28MS)
-    {
-        output_low(ECHO);
-        // The echo is detected so all modules but trigger detection should be disabled
-        timer_stop();
-        comparator_disable();
-        gpio_trigger_enable();
-        
-        state = WAIT_FOR_TRIGGER;
-    }*/
+    
     event = transceiver_wait;
 }

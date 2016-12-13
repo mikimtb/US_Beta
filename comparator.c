@@ -18,7 +18,11 @@ enum
  */
 void comparator_init()
 {
+#ifdef DEBUG
     setup_comparator(CP1_B3_VREF | CP2_A0_VREF | CP2_INVERT);
+#else
+    setup_comparator(A1_VR_C1_VR | COMP_INVERT);
+#endif
     setup_vref(VREF_HIGH | VREF_3_59375V);              // Sets internal Vref to 3.6V
 }
 

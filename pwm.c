@@ -1,8 +1,13 @@
 #include "pwm.h"
 
 // Global defines
+#ifdef DEBUG
 #define P1A     PIN_C2
 #define P1B     PIN_D5
+#else
+#define P1A     PIN_C5
+#define P1B     PIN_C4
+#endif
 
 // Registers definitions
 /* Peripheral interrupt register */
@@ -32,9 +37,6 @@ void pwm_set_deadband(int8 deadband)
  */
 void pwm_init()
 {
-    //#byte PIR1 = 0x0c;
-    //#bit TMR2IF = PIR1.1;
-    
     setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
     pwm_high_z();
     setup_timer_2(T2_DIV_BY_1,49,1);                                    //25.0 us overflow, 25.0 us interrupt
@@ -72,6 +74,10 @@ void pwm_stop()
  */
 void pwm_high_z()
 {
+#ifdef DEBUG
     set_tris_c(get_tris_c() | 0b00000100);
     set_tris_d(get_tris_d() | 0b00100000);
+#else
+    set_tris_c(get_tris_c() | 0b00110000);
+#endif
 }

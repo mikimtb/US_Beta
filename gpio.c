@@ -1,7 +1,11 @@
 #include "gpio.h"
 
 /* PORTB address */
+#ifdef DEBUG
 #byte PORTB = 0x06
+#else
+#byte PORTA = 0x05
+#endif
 
 /**
  * Function initialize gpio pins for Trigger and Echo
@@ -10,25 +14,30 @@
  */
 void gpio_init()
 {
-    char b;
-    
-    set_tris_b(get_tris_b() & 0b11110011);          // Set RB2 and RB3 as output because 
+#ifdef DEBUG    
+    set_tris_b(get_tris_b() & 0b11111011);          // Set RB2 and RB3 as output because 
                                                     // the pins are used as ECHO and TEST
-/*    b = PORTB;                                      // Clear mismatch condition
-    clear_interrupt(INT_RB);
-    enable_interrupts(INT_RB0);*/
+#else
+    set_tris_a(get_tris_a() & 0b11111101);          // Set RA1 as output because 
+                                                    // the pin is used as ECHO
+#endif
 }
 
 /**
- * Function enable INT_RB0 interrups in order to catch trigger
+ * Function enable INT_RB0 interrupts in order to catch trigger
  */
 void gpio_trigger_enable()
 {
     char b;
-    
+#ifdef DEBUG   
     b = PORTB;                              // Clear mismatch condition
     clear_interrupt(INT_RB);
     enable_interrupts(INT_RB0);
+#else
+    b = PORTA;                              // Clear mismatch condition
+    clear_interrupt(INT_RA);
+    enable_interrupts(INT_RA0);
+#endif
 }
 
 

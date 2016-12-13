@@ -9,7 +9,8 @@
 #define	MAIN_H
 
 /* MCU definition */
-#define DEBUG   TRUE
+// Comment DEBUG definition for PIC16F684 release
+//#define DEBUG   TRUE
 
 #ifdef DEBUG
 #include <16F887.h>
@@ -34,8 +35,13 @@
 #use delay(int=8000000)
 
 /* Global defines */
+#ifdef DEBUG
 #define TRIG PIN_B0
 #define ECHO PIN_B2
+#else
+#define TRIG PIN_A0
+#define ECHO PIN_A1
+#endif
 
 #endif	/* US_RANGE_FINDER_H */
 
