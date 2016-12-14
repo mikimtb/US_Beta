@@ -39,8 +39,11 @@
 #define TRIG PIN_B0
 #define ECHO PIN_B2
 #else
-#define TRIG PIN_A0
-#define ECHO PIN_A1
+#define TRIG PIN_A2
+#define ECHO PIN_A5
+// Pins that are used for debug because debug tool is unavailable
+#define DEBUG1 PIN_C2
+#define DEBUG2 PIN_C3
 #endif
 
 #endif	/* US_RANGE_FINDER_H */

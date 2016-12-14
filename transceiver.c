@@ -84,9 +84,13 @@ void timer_tick(void)
 void comparator_isr_handler()
 {
     if (C2OUT == TRUE)
-        event = transceiver_echo_above;
-    else
+    {
         event = transceiver_echo_below;
+    }
+    else
+    {
+        event = transceiver_echo_above;
+    }
     
     clear_interrupt(INT_COMP2);
 }
@@ -180,7 +184,7 @@ void transceiver_trigger()
     transceiver_listen();                   // Switch the transceiver to listening mode
     
     setup_vref(VREF_HIGH | VREF_3_59375V);
-    comparator_enable();                    // Enable comparator module
+    //comparator_enable();                    // Enable comparator module
     
     event = transceiver_wait;
     
@@ -206,7 +210,7 @@ void transceiver_timeout()
  * Callback function that is called when echo goes above threshold voltage
  */
 void transceiver_echo_above()
-{
+{ 
     if (state == LISTEN_28MS)
     {
         output_low(ECHO);

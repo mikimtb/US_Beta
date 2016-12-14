@@ -18,7 +18,7 @@ void gpio_init()
     set_tris_b(get_tris_b() & 0b11111011);          // Set RB2 and RB3 as output because 
                                                     // the pins are used as ECHO and TEST
 #else
-    set_tris_a(get_tris_a() & 0b11111101);          // Set RA1 as output because 
+    set_tris_a(get_tris_a() & 0b11011111);          // Set RA1 as output because 
                                                     // the pin is used as ECHO
 #endif
 }
@@ -36,7 +36,7 @@ void gpio_trigger_enable()
 #else
     b = PORTA;                              // Clear mismatch condition
     clear_interrupt(INT_RA);
-    enable_interrupts(INT_RA0);
+    enable_interrupts(INT_RA2);
 #endif
 }
 

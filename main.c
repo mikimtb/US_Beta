@@ -13,5 +13,18 @@ void main()
     while(TRUE)
     {
         transceiver_event_handler();
+        /*output_toggle(ECHO);
+        output_toggle(TRIG);
+        delay_ms(100);*/
+        /*if (C2OUT == TRUE)
+        {
+        output_low(DEBUG2);
+        //event = transceiver_echo_above;
+        }
+        else
+        {
+        output_high(DEBUG2);
+        //event = transceiver_echo_below;
+        }*/
     }
 }
