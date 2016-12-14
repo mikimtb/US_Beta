@@ -37,11 +37,11 @@ void pwm_set_deadband(int8 deadband)
  */
 void pwm_init()
 {
-    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
+    //setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
     pwm_high_z();
     setup_timer_2(T2_DIV_BY_1,49,1);                                    //25.0 us overflow, 25.0 us interrupt
-    TMR2ON = 0;
-    TMR2 = 0;
+    //TMR2ON = 0;
+    //TMR2 = 0;
     set_pwm1_duty((int16)98);                                           // Set PWM Duty cycle to 50%
     pwm_set_deadband(1); 
 }
@@ -51,23 +51,25 @@ void pwm_init()
 void pwm_start()
 {
     /* Prepare timer and enable outputs */
-    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
-    TMR2 = 0;
+    //setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
+    //TMR2 = 0;
     TMR2IF = 0;
-    TMR2ON = 1;
+    //TMR2ON = 1;
     while (!TMR2IF);
-    output_drive(P1A);
-    output_drive(P1B);
+    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
+    //output_drive(P1A);
+    //output_drive(P1B);
 }
 /**
  * Function disable tris register and pwm operation
  */
 void pwm_stop()
 {
+    setup_ccp1(CCP_OFF);
     output_low(P1A);
     output_low(P1B);
-    TMR2ON = 0;
-    setup_ccp1(CCP_OFF);
+    //TMR2ON = 0;
+    
 }
 /**
  * Function setting PWM output pins in high Z state
