@@ -29,7 +29,7 @@
 #FUSES INTRC_IO                 // Internal RC Osc, no CLKOUT, pins are used as IO
 #FUSES NOBROWNOUT            	// No brownout reset
 #FUSES NOIESO                	// Internal External Switch Over mode disabled
-#FUSES NOMCLR                   // MCLR pin is used as IO
+#FUSES MCLR                   // MCLR pin is used as IO
 #endif
 
 #use delay(int=8000000)
