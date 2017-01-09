@@ -138,7 +138,7 @@ void transceiver_transmit(int8 pulse_no)
     pwm_stop();
     
     output_high(ECHO);                      // Transmission is done set ECHO to start listening
-    delay_us(100);                          // Wait 100us to suppress ringing of transducer
+    delay_us(200);                          // Wait 100us to suppress ringing of transducer
 }
 /**
  * Function switch transceiver in listen mode
@@ -237,8 +237,8 @@ void transceiver_echo_below()
                                                 // should be set to 28ms 
         state = LISTEN_28MS;
         
-        //comparator_disable();
-        setup_vref(VREF_HIGH | VREF_2_96875V);  // Change threshold to catch echo
+        comparator_disable();
+        setup_vref(VREF_HIGH | VREF_2_65625V);  // Change threshold to catch echo
         comparator_enable();
     }
     
