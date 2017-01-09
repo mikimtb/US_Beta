@@ -39,7 +39,7 @@ int timeout = 0;
 void gpio_isr_handler()
 {
     char b;
-    
+    output_toggle(DEBUG1);
     if(input(TRIG))
     {
         event = transceiver_trigger;
@@ -98,7 +98,7 @@ void comparator_isr_handler()
 void transceiver_init()
 {
     pwm_init();
-    comparator_init();
+    //comparator_init();
     gpio_init();
     timer_init();
 }
@@ -110,7 +110,7 @@ void transceiver_ready()
 {
     output_low(ECHO);
     timer_stop();
-    comparator_disable();
+    comparator_disable_int();
     gpio_trigger_enable();
         
     state = WAIT_FOR_TRIGGER;
@@ -183,8 +183,10 @@ void transceiver_trigger()
     transceiver_transmit(7);                // Transmit 7 pulses
     transceiver_listen();                   // Switch the transceiver to listening mode
     
-    setup_vref(VREF_HIGH | VREF_3_59375V);
-    comparator_enable();                    // Enable comparator module
+    comparator_init();
+    
+    //setup_vref(VREF_HIGH | VREF_3_59375V);
+    comparator_enable_int();                   // Enable comparator module
     
     event = transceiver_wait;
     
@@ -196,8 +198,8 @@ void transceiver_trigger()
 void transceiver_timeout()
 {
     output_low(ECHO);                       // Timeout exception reset ECHO
-    comparator_disable();                   // Disable comparator because timeout exception is caught
-    
+    comparator_disable_int();                   // Disable comparator because timeout exception is caught
+    comparator_disable_module();
     // Enable trigger interrupt again in order to catch another trigger
     gpio_trigger_enable();
     
@@ -216,7 +218,8 @@ void transceiver_echo_above()
         output_low(ECHO);
         // The echo is detected so all modules but trigger detection should be disabled
         timer_stop();
-        comparator_disable();
+        comparator_disable_int();
+        comparator_disable_module();
         gpio_trigger_enable();
         
         state = WAIT_FOR_TRIGGER;
@@ -237,9 +240,9 @@ void transceiver_echo_below()
                                                 // should be set to 28ms 
         state = LISTEN_28MS;
         
-        comparator_disable();
+        comparator_disable_int();
         setup_vref(VREF_HIGH | VREF_2_65625V);  // Change threshold to catch echo
-        comparator_enable();
+        comparator_enable_int();
     }
     
     event = transceiver_wait;

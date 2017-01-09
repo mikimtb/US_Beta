@@ -1,4 +1,5 @@
 #include "comparator.h"
+#include "gpio.h"
 
 // Enumerations
 enum
@@ -23,13 +24,22 @@ void comparator_init()
 #else
     setup_comparator(A1_VR_C1_VR | COMP_INVERT);
 #endif
-    setup_vref(VREF_HIGH | VREF_3_59375V);              // Sets internal Vref to 3.6V
+    setup_vref(VREF_HIGH | VREF_3_59375V);          // Sets internal Vref to 3.6V
+}
+
+/**
+ * Function disable comparator module at all
+ */
+void comparator_disable_module()
+{
+    setup_comparator(NC_NC);                        // Disable comparator module
+    gpio_init();                                    // Re init gpio module
 }
 
 /**
  * Function enables comparator 2 module and set threshold voltage to 3.6V
  */
-void comparator_enable()
+void comparator_enable_int()
 {
     clear_interrupt(INT_COMP2);                     // Clear interrupt flag and enable 
     enable_interrupts(INT_COMP2);                   // Comparator 2 interrupt on change
@@ -38,7 +48,7 @@ void comparator_enable()
 /**
  * Function disable comparator 2 module
  */
-void comparator_disable()
+void comparator_disable_int()
 {
     clear_interrupt(INT_COMP2);
     disable_interrupts(INT_COMP2);
