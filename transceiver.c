@@ -139,7 +139,7 @@ void transceiver_transmit(int8 pulse_no)
     pwm_stop();
     
     output_high(ECHO);                      // Transmission is done set ECHO to start listening
-    delay_us(200);                          // Wait 100us to suppress ringing of transducer
+    delay_us(50);                          // Wait 100us to suppress ringing of transducer
 }
 /**
  * Function switch transceiver in listen mode
