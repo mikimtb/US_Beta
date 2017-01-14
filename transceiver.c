@@ -39,7 +39,7 @@ int timeout = 0;
 void gpio_isr_handler()
 {
     char b;
-    output_toggle(DEBUG1);
+    //output_toggle(DEBUG1);
     if(input(TRIG))
     {
         event = transceiver_trigger;
@@ -99,6 +99,7 @@ void transceiver_init()
 {
     pwm_init();
     //comparator_init();
+    //adc_init();
     gpio_init();
     timer_init();
 }

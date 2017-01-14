@@ -27,6 +27,13 @@ void comparator_init()
     setup_vref(VREF_HIGH | VREF_3_59375V);          // Sets internal Vref to 3.6V
 }
 
+void adc_init()
+{
+    setup_adc_ports(sAN3, VSS_VDD);
+    setup_adc(ADC_CLOCK_INTERNAL);
+    set_adc_channel(3);
+}
+
 /**
  * Function disable comparator module at all
  */
