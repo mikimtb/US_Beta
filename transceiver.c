@@ -44,9 +44,9 @@ void gpio_isr_handler()
     {
         event = transceiver_trigger;
 #ifdef DEBUG
-        disable_interrupts(INT_RB);
+        //disable_interrupts(INT_RB);
 #else
-        disable_interrupts(INT_RA);
+        //disable_interrupts(INT_RA);
 #endif
     }
 #ifdef DEBUG
@@ -99,7 +99,6 @@ void transceiver_init()
 {
     pwm_init();
     //comparator_init();
-    //adc_init();
     gpio_init();
     timer_init();
 }
@@ -139,7 +138,7 @@ void transceiver_transmit(int8 pulse_no)
     pwm_stop();
     
     output_high(ECHO);                      // Transmission is done set ECHO to start listening
-    delay_us(50);                          // Wait 100us to suppress ringing of transducer
+    delay_us(2000);                          // Wait 100us to suppress ringing of transducer
 }
 /**
  * Function switch transceiver in listen mode
@@ -178,16 +177,16 @@ void transceiver_wait()
  */
 void transceiver_trigger()
 {
-    timer_start(2);                         // Start timeout to detect objects that are closer than 34cm
+    //timer_start(2);                         // Start timeout to detect objects that are closer than 34cm
     state = LISTEN_2MS;                     // Set state machine state
 
-    transceiver_transmit(7);                // Transmit 7 pulses
+    transceiver_transmit(4);                // Transmit 7 pulses
     transceiver_listen();                   // Switch the transceiver to listening mode
     
-    comparator_init();
+    //comparator_init();
     
-    //setup_vref(VREF_HIGH | VREF_3_59375V);
-    comparator_enable_int();                   // Enable comparator module
+    
+    //comparator_enable_int();                   // Enable comparator module
     
     event = transceiver_wait;
     

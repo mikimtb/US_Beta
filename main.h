@@ -10,7 +10,7 @@
 
 /* MCU definition */
 // Comment DEBUG definition for PIC16F684 release
-//#define DEBUG   TRUE
+#define DEBUG   TRUE
 
 #ifdef DEBUG
 #include <16F887.h>

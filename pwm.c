@@ -66,7 +66,12 @@ void pwm_start()
 void pwm_stop()
 {
     setup_ccp1(CCP_OFF);
-    output_low(P1A);
+    //output_low(P1A);
+#ifdef DEBUG
+    set_tris_c(get_tris_c() | 0b00000100);
+#else
+    set_tris_c(get_tris_c() | 0b00100000);
+#endif
     output_low(P1B);
     //TMR2ON = 0;
     
