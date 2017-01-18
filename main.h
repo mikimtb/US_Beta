@@ -12,6 +12,9 @@
 // Comment DEBUG definition for PIC16F684 release
 #define DEBUG   TRUE
 
+// Comment INTERNAL_TRIGGER if you want to trigger the device externally
+#define INTERNAL_TRIGGER
+
 #ifdef DEBUG
 #include <16F887.h>
 #device adc=10

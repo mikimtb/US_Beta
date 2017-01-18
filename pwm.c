@@ -37,11 +37,8 @@ void pwm_set_deadband(int8 deadband)
  */
 void pwm_init()
 {
-    //setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
     pwm_high_z();
-    setup_timer_2(T2_DIV_BY_1,49,1);                                    //25.0 us overflow, 25.0 us interrupt
-    //TMR2ON = 0;
-    //TMR2 = 0;
+    setup_timer_2(T2_DIV_BY_1,49,1);                                    // 25.0 us overflow, 25.0 us interrupt
     set_pwm1_duty((int16)98);                                           // Set PWM Duty cycle to 50%
     pwm_set_deadband(1); 
 }
@@ -50,15 +47,10 @@ void pwm_init()
  */
 void pwm_start()
 {
-    /* Prepare timer and enable outputs */
-    //setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
-    //TMR2 = 0;
+    /* Clear TMR2 interrupt flag and wait for next set */
     TMR2IF = 0;
-    //TMR2ON = 1;
     while (!TMR2IF);
-    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_L_L);
-    //output_drive(P1A);
-    //output_drive(P1B);
+    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_L_L);                      // Initialize PWM module
 }
 /**
  * Function disable tris register and pwm operation
@@ -73,8 +65,6 @@ void pwm_stop()
     set_tris_c(get_tris_c() | 0b00100000);
 #endif
     output_low(P1B);
-    //TMR2ON = 0;
-    
 }
 /**
  * Function setting PWM output pins in high Z state

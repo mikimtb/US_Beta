@@ -22,8 +22,6 @@ void transceiver_event_handler(void);
 void transceiver_wait(void);
 void transceiver_trigger(void);
 void transceiver_timeout(void);
-void transceiver_echo_above(void);
-void transceiver_echo_below(void);
 
 #endif	/* TRANCEIVER_H */
 

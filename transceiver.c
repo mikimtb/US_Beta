@@ -8,7 +8,7 @@
 #include "comparator.h"
 #include "comparator.c"
 #include "main.h"
-extern long j;
+
 //Type definitions
 typedef void (*t_fptr)(void);
 
@@ -19,7 +19,7 @@ typedef enum
     WAIT_FOR_TRIGGER = 0,
     TRANSMIT = 1,
     LISTEN_2MS = 2,
-    LISTEN_28MS = 3
+    LISTEN_8MS = 3
 } e_state_machine;
 
 e_state_machine state = WAIT_FOR_TRIGGER;
@@ -39,14 +39,14 @@ int timeout = 0;
 void gpio_isr_handler()
 {
     char b;
-    //output_toggle(DEBUG1);
+    
     if(input(TRIG))
     {
         event = transceiver_trigger;
 #ifdef DEBUG
         disable_interrupts(INT_RB);
 #else
-        //disable_interrupts(INT_RA);
+        disable_interrupts(INT_RA);
 #endif
     }
 #ifdef DEBUG
@@ -69,13 +69,12 @@ void timer_tick(void)
         event = transceiver_timeout;
         disable_interrupts(INT_RTCC);
     }
-    //output_toggle(PIN_B2);
     T0IF = 0;
 }
 
 /**
  * Comparator change event handler
- * ECHO connected to the C2IN-, Vref connected internally to C2IN+
+ * ECHO connected to the C2IN-, Vref is connected internally to C2IN+
  * Comparator output is inverted
  * R2IN+ < R2IN- = HIGH
  * R2IN+ > R2IN- = LOW
@@ -83,29 +82,19 @@ void timer_tick(void)
 #INT_COMP2
 void comparator_isr_handler()
 {
-     j++;
-    //output_low(ECHO);
-    //if (C2OUT == TRUE)
+    if (state == LISTEN_8MS)
     {
-        //event = transceiver_echo_below;
-        //event = transceiver_echo_above;
-        if (state == LISTEN_28MS)
-        {
-            output_low(ECHO);
-            // The echo is detected so all modules but trigger detection should be disabled
-            timer_stop();
-            comparator_disable_int();
-            comparator_disable_module();
-            gpio_trigger_enable();
+        output_low(ECHO);
+        // The echo is detected so all modules but trigger 
+        // detection should be disabled
+        timer_stop();
+        comparator_disable_int();
+        comparator_disable_module();
+        gpio_trigger_enable();
 
-            state = WAIT_FOR_TRIGGER;
-        }
+        state = WAIT_FOR_TRIGGER;
     }
-    /*else
-    {
-        event = transceiver_echo_above;
-    }*/
-    
+   
     clear_interrupt(INT_COMP2);
 }
 
@@ -113,7 +102,6 @@ void comparator_isr_handler()
 void transceiver_init()
 {
     pwm_init();
-    //comparator_init();
     gpio_init();
     timer_init();
 }
@@ -153,8 +141,6 @@ void transceiver_transmit(int8 pulse_no)
     pwm_stop();
  
     output_high(ECHO);                      // Transmission is done set ECHO to start listening
-    //delay_us(2000);                          // Wait 100us to suppress ringing of transducer
-    //damp_ringing();
 }
 /**
  * Function switch transceiver in listen mode
@@ -199,13 +185,7 @@ void transceiver_trigger()
     transceiver_transmit(7);                // Transmit 7 pulses
     transceiver_listen();                   // Switch the transceiver to listening mode
     
-    //comparator_init();
-    
-    
-    //comparator_enable_int();                   // Enable comparator module
-    
-    //event = transceiver_wait;
-    
+    event = transceiver_wait;
 }
 
 /**
@@ -213,13 +193,6 @@ void transceiver_trigger()
  */
 void transceiver_timeout()
 {
-    //output_low(ECHO);                       // Timeout exception reset ECHO
-    //comparator_disable_int();                   // Disable comparator because timeout exception is caught
-    //comparator_disable_module();
-    // Enable trigger interrupt again in order to catch another trigger
-    //gpio_trigger_enable();
-    
-    //state = WAIT_FOR_TRIGGER;
     if(state == LISTEN_2MS)
     {
         comparator_init();
@@ -227,9 +200,9 @@ void transceiver_timeout()
 
         timer_start(8);
 
-        state = LISTEN_28MS;
+        state = LISTEN_8MS;
     }
-    else if (state == LISTEN_28MS)
+    else if (state == LISTEN_8MS)
     {
         output_low(ECHO);
         // The echo is detected so all modules but trigger detection should be disabled
@@ -241,45 +214,5 @@ void transceiver_timeout()
         state = WAIT_FOR_TRIGGER;
     }
         
-    event = transceiver_wait;
-}
-
-/**
- * Callback function that is called when echo goes above threshold voltage
- */
-void transceiver_echo_above()
-{ 
-    if (state == LISTEN_28MS)
-    {
-        output_low(ECHO);
-        // The echo is detected so all modules but trigger detection should be disabled
-        timer_stop();
-        comparator_disable_int();
-        comparator_disable_module();
-        gpio_trigger_enable();
-        
-        state = WAIT_FOR_TRIGGER;
-        
-    }
-    event = transceiver_wait;
-}
-
-/**
- * Callback function that is called when echo goes below threshold voltage
- */
-void transceiver_echo_below()
-{
-    /*if(state == LISTEN_2MS)
-    {
-        timer_start(28);                        // Obstacle is not detected in dead zone of 34cm
-                                                // so timer tick should be prevented and timeout
-                                                // should be set to 28ms 
-        state = LISTEN_28MS;
-        
-        comparator_disable_int();
-        setup_vref(VREF_HIGH | VREF_2_65625V);  // Change threshold to catch echo
-        comparator_enable_int();
-    }*/
-    output_low(ECHO);
     event = transceiver_wait;
 }
