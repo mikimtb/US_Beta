@@ -24,7 +24,7 @@ void comparator_init()
 #else
     setup_comparator(A1_VR_C1_VR | COMP_INVERT);
 #endif
-    setup_vref(VREF_HIGH | VREF_3_59375V);          // Sets internal Vref to 3.6V
+    setup_vref(VREF_HIGH | VREF_3_28125V);          // Sets internal Vref to 3.6V
 }
 
 void adc_init()

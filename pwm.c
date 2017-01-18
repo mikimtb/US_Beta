@@ -56,7 +56,7 @@ void pwm_start()
     TMR2IF = 0;
     //TMR2ON = 1;
     while (!TMR2IF);
-    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_H_H);
+    setup_ccp1(CCP_PWM_HALF_BRIDGE | CCP_PWM_L_L);
     //output_drive(P1A);
     //output_drive(P1B);
 }

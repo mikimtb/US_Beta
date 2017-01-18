@@ -8,7 +8,7 @@
 #include "comparator.h"
 #include "comparator.c"
 #include "main.h"
-
+extern long j;
 //Type definitions
 typedef void (*t_fptr)(void);
 
@@ -44,7 +44,7 @@ void gpio_isr_handler()
     {
         event = transceiver_trigger;
 #ifdef DEBUG
-        //disable_interrupts(INT_RB);
+        disable_interrupts(INT_RB);
 #else
         //disable_interrupts(INT_RA);
 #endif
@@ -83,17 +83,32 @@ void timer_tick(void)
 #INT_COMP2
 void comparator_isr_handler()
 {
-    if (C2OUT == TRUE)
+     j++;
+    //output_low(ECHO);
+    //if (C2OUT == TRUE)
     {
-        event = transceiver_echo_below;
+        //event = transceiver_echo_below;
+        //event = transceiver_echo_above;
+        if (state == LISTEN_28MS)
+        {
+            output_low(ECHO);
+            // The echo is detected so all modules but trigger detection should be disabled
+            timer_stop();
+            comparator_disable_int();
+            comparator_disable_module();
+            gpio_trigger_enable();
+
+            state = WAIT_FOR_TRIGGER;
+        }
     }
-    else
+    /*else
     {
         event = transceiver_echo_above;
-    }
+    }*/
     
     clear_interrupt(INT_COMP2);
 }
+
 //
 void transceiver_init()
 {
@@ -136,9 +151,10 @@ void transceiver_transmit(int8 pulse_no)
         }
     }
     pwm_stop();
-    
+ 
     output_high(ECHO);                      // Transmission is done set ECHO to start listening
-    delay_us(2000);                          // Wait 100us to suppress ringing of transducer
+    //delay_us(2000);                          // Wait 100us to suppress ringing of transducer
+    //damp_ringing();
 }
 /**
  * Function switch transceiver in listen mode
@@ -177,10 +193,10 @@ void transceiver_wait()
  */
 void transceiver_trigger()
 {
-    //timer_start(2);                         // Start timeout to detect objects that are closer than 34cm
+    timer_start(2);                         // Start timeout to detect objects that are closer than 34cm
     state = LISTEN_2MS;                     // Set state machine state
 
-    transceiver_transmit(4);                // Transmit 7 pulses
+    transceiver_transmit(7);                // Transmit 7 pulses
     transceiver_listen();                   // Switch the transceiver to listening mode
     
     //comparator_init();
@@ -188,7 +204,7 @@ void transceiver_trigger()
     
     //comparator_enable_int();                   // Enable comparator module
     
-    event = transceiver_wait;
+    //event = transceiver_wait;
     
 }
 
@@ -197,14 +213,34 @@ void transceiver_trigger()
  */
 void transceiver_timeout()
 {
-    output_low(ECHO);                       // Timeout exception reset ECHO
-    comparator_disable_int();                   // Disable comparator because timeout exception is caught
-    comparator_disable_module();
+    //output_low(ECHO);                       // Timeout exception reset ECHO
+    //comparator_disable_int();                   // Disable comparator because timeout exception is caught
+    //comparator_disable_module();
     // Enable trigger interrupt again in order to catch another trigger
-    gpio_trigger_enable();
+    //gpio_trigger_enable();
     
-    state = WAIT_FOR_TRIGGER;
-    
+    //state = WAIT_FOR_TRIGGER;
+    if(state == LISTEN_2MS)
+    {
+        comparator_init();
+        comparator_enable_int();
+
+        timer_start(8);
+
+        state = LISTEN_28MS;
+    }
+    else if (state == LISTEN_28MS)
+    {
+        output_low(ECHO);
+        // The echo is detected so all modules but trigger detection should be disabled
+        timer_stop();
+        comparator_disable_int();
+        comparator_disable_module();
+        gpio_trigger_enable();
+        
+        state = WAIT_FOR_TRIGGER;
+    }
+        
     event = transceiver_wait;
 }
 
@@ -233,7 +269,7 @@ void transceiver_echo_above()
  */
 void transceiver_echo_below()
 {
-    if(state == LISTEN_2MS)
+    /*if(state == LISTEN_2MS)
     {
         timer_start(28);                        // Obstacle is not detected in dead zone of 34cm
                                                 // so timer tick should be prevented and timeout
@@ -243,7 +279,7 @@ void transceiver_echo_below()
         comparator_disable_int();
         setup_vref(VREF_HIGH | VREF_2_65625V);  // Change threshold to catch echo
         comparator_enable_int();
-    }
-    
+    }*/
+    output_low(ECHO);
     event = transceiver_wait;
 }
