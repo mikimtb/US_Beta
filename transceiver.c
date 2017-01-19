@@ -185,6 +185,7 @@ void transceiver_wait()
  */
 void transceiver_trigger()
 {
+    disable_interrupts(GLOBAL);
     timer_start(2);                         // Start timeout to detect objects that are closer than 34cm
     state = LISTEN_2MS;                     // Set state machine state
 
@@ -192,6 +193,7 @@ void transceiver_trigger()
     transceiver_listen();                   // Switch the transceiver to listening mode
     
     event = transceiver_wait;
+    enable_interrupts(GLOBAL);
 }
 
 /**
