@@ -19,7 +19,9 @@ typedef enum
     WAIT_FOR_TRIGGER = 0,
     TRANSMIT = 1,
     LISTEN_2MS = 2,
-    LISTEN_8MS = 3
+    LISTEN_3MS = 3,
+    LISTEN_4MS = 4,
+    LISTEN_9MS = 5
 } e_state_machine;
 
 e_state_machine state = WAIT_FOR_TRIGGER;
@@ -62,14 +64,16 @@ void gpio_isr_handler()
 #INT_RTCC
 void timer_tick(void)
 {
+    disable_interrupts(GLOBAL);
     set_timer0(10);
     timeout--;
     if (timeout == 0)
     {
-        event = transceiver_timeout;
         disable_interrupts(INT_RTCC);
+        event = transceiver_timeout;
     }
     T0IF = 0;
+    enable_interrupts(GLOBAL);
 }
 
 /**
@@ -82,7 +86,8 @@ void timer_tick(void)
 #INT_COMP2
 void comparator_isr_handler()
 {
-    if (state == LISTEN_8MS)
+    disable_interrupts(GLOBAL);
+    if (state != LISTEN_2MS && state != WAIT_FOR_TRIGGER & state != TRANSMIT)
     {
         output_low(ECHO);
         // The echo is detected so all modules but trigger 
@@ -96,6 +101,7 @@ void comparator_isr_handler()
     }
    
     clear_interrupt(INT_COMP2);
+    enable_interrupts(GLOBAL);
 }
 
 //
@@ -193,26 +199,48 @@ void transceiver_trigger()
  */
 void transceiver_timeout()
 {
-    if(state == LISTEN_2MS)
+    disable_interrupts(GLOBAL);
+    switch (state)
     {
-        comparator_init();
-        comparator_enable_int();
+        // Enable comparator module to start listening
+        case LISTEN_2MS :
+            comparator_init();
+            comparator_enable_int();
 
-        timer_start(8);
+            timer_start(1);                     // Wait two more milliseconds
 
-        state = LISTEN_8MS;
-    }
-    else if (state == LISTEN_8MS)
-    {
-        output_low(ECHO);
-        // The echo is detected so all modules but trigger detection should be disabled
-        timer_stop();
-        comparator_disable_int();
-        comparator_disable_module();
-        gpio_trigger_enable();
+            state = LISTEN_3MS;
+            break;
+        // Reduce threshold after 3ms from transmission to detect far objects
+        case LISTEN_3MS :
+            timer_start(1);
+            
+            comparator_set_vref(VREF_3_125V);
+            
+            state = LISTEN_4MS;
+            break;
+        // Reduce threshold after 4ms from transmission to detect far objects
+        case LISTEN_4MS :
+            timer_start(5);
+            
+            comparator_set_vref(VREF_2_96875V);
+            
+            state = LISTEN_9MS;
+            break;
+        // Timeout there is no echo signal so stop listening    
+        case LISTEN_9MS :
+            output_low(ECHO);
+            // The echo is detected so all modules but trigger detection should be disabled
+            timer_stop();
+            comparator_disable_int();
+            comparator_disable_module();
+            gpio_trigger_enable();
         
-        state = WAIT_FOR_TRIGGER;
+            state = WAIT_FOR_TRIGGER;
+            break;
     }
         
     event = transceiver_wait;
+    
+    enable_interrupts(GLOBAL);
 }

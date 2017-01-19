@@ -36,5 +36,6 @@ void timer_start(int tout)
  */
 void timer_stop()
 {
+    clear_interrupt(INT_RTCC);
     disable_interrupts(INT_RTCC);
 }
