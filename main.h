@@ -13,7 +13,7 @@
 //#define DEBUG   TRUE
 
 // Comment INTERNAL_TRIGGER if you want to trigger the device externally
-#define INTERNAL_TRIGGER
+//#define INTERNAL_TRIGGER
 
 #ifdef DEBUG
 #include <16F887.h>

@@ -7,7 +7,7 @@ void main()
    
     /* Initialize PWM module*/
     transceiver_init();
-    delay_ms(60);
+    delay_ms(1);
     transceiver_ready();
     enable_interrupts(global);                  // Enable all interrupts
    
@@ -20,6 +20,11 @@ void main()
             transceiver_trigger();
         }
 #endif
+        if (state == RESET_MCU)
+        {
+            delay_us(500);
+            reset_cpu();
+        }
         transceiver_event_handler();
        
     }

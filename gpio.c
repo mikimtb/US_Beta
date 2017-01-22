@@ -18,8 +18,8 @@ void gpio_init()
     set_tris_b(get_tris_b() & 0b11111011);          // Set RB2 and RB3 as output because 
                                                     // the pins are used as ECHO and TEST
 #else
-    set_tris_a(get_tris_a() & 0b11011111);          // Set RA5 as output because 
-                                                    // the pin is used as ECHO
+    set_tris_a(get_tris_a() | 0b00000001);          // Set RA0 as input because 
+                                                    // the pin is used as TRIG
 #endif
 }
 

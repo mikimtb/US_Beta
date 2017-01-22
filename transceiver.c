@@ -21,7 +21,8 @@ typedef enum
     LISTEN_2MS = 2,
     LISTEN_3MS = 3,
     LISTEN_4MS = 4,
-    LISTEN_9MS = 5
+    LISTEN_9MS = 5,
+    RESET_MCU = 6
 } e_state_machine;
 
 e_state_machine state = WAIT_FOR_TRIGGER;
@@ -87,7 +88,7 @@ void timer_tick(void)
 void comparator_isr_handler()
 {
     disable_interrupts(GLOBAL);
-    if (state != LISTEN_2MS && state != WAIT_FOR_TRIGGER & state != TRANSMIT)
+    if (state != LISTEN_2MS && state != WAIT_FOR_TRIGGER && state != TRANSMIT)
     {
         output_low(ECHO);
         // The echo is detected so all modules but trigger 
@@ -97,7 +98,7 @@ void comparator_isr_handler()
         comparator_disable_module();
         gpio_trigger_enable();
 
-        state = WAIT_FOR_TRIGGER;
+        state = RESET_MCU;
     }
    
     clear_interrupt(INT_COMP2);
@@ -238,7 +239,7 @@ void transceiver_timeout()
             comparator_disable_module();
             gpio_trigger_enable();
         
-            state = WAIT_FOR_TRIGGER;
+            state = RESET_MCU;
             break;
     }
         
