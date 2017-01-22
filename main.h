@@ -10,7 +10,7 @@
 
 /* MCU definition */
 // Comment DEBUG definition for PIC16F684 release
-#define DEBUG   TRUE
+//#define DEBUG   TRUE
 
 // Comment INTERNAL_TRIGGER if you want to trigger the device externally
 #define INTERNAL_TRIGGER
