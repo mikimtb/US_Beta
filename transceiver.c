@@ -207,10 +207,13 @@ void transceiver_timeout()
     {
         // Enable comparator module to start listening
         case LISTEN_2MS :
+            timer_start(1);             // Wait one milliseconds
+            delay_us(300);              // Wait for 300us to increase dead zone to 39cm     
+            
             comparator_init();
             comparator_enable_int();
 
-            timer_start(1);                     // Wait two more milliseconds
+                                 
 
             state = LISTEN_3MS;
             break;
